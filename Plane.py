@@ -46,7 +46,9 @@ def req_info(a, d):
                 worksheet.write(row, col, one)
                 col += 1
             row += 1
-    file_name = '{} to {}'.format(a, d) + '.xls'
+    if not os.path.exists('./results'):
+        os.mkdir('results')
+    file_name = './results/'+'{} to {}'.format(a, d) + '.xls'
     if os.path.exists(file_name):
         os.remove(file_name)
     workbook.save(file_name)
