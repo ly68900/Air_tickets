@@ -25,7 +25,6 @@ def req_info(a, d):
     workbook = xlwt.Workbook(encoding='utf-8')
     worksheet = workbook.add_sheet('prices')
     title = ['日期', '出发', '到达', '价格']
-    data = ['']
     row = 0
     col = 0
 
@@ -40,14 +39,11 @@ def req_info(a, d):
         col = 0
         if item['price'] is not None:
             data = [item['dDate'], a, d, item['price']]
-            # print(data)
             for one in data:
                 print('row:{},col:{}'.format(row, col))
                 worksheet.write(row, col, one)
                 col += 1
             row += 1
-    if not os.path.exists('./results'):
-        os.mkdir('results')
     file_name = './results/'+'{} to {}'.format(a, d) + '.xls'
     if os.path.exists(file_name):
         os.remove(file_name)
@@ -55,7 +51,8 @@ def req_info(a, d):
 
 
 if __name__ == '__main__':
-
+    if not os.path.exists('./results'):
+        os.mkdir('results')
     city_dic = {'PAR': 'SHA', 'AMS': 'SHA', 'FRA': ['SHA', 'PVG', 'NKG']}
     keys_list = city_dic.keys()
     for a_city in keys_list:
