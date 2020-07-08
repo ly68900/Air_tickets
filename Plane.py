@@ -2,8 +2,11 @@ import requests
 import xlwt
 import json
 import os
+import logging
+
 
 def req_info(a, d):
+    logging.info('开始写入{} to {}'.format(a, d)+'的航班信息')
     body = '{"stype":2,"dCty":"' + a + '","aCty":"' + d + '","flag":1,"start":"","end":"","classLevels":["Y"],' \
                                                           '"head":{"cid":"09031126310322327181","ctok":"",' \
                                                           '"cver":"1.0","lang":"01","sid":"8888","syscode":"09",' \
@@ -34,27 +37,31 @@ def req_info(a, d):
     row = 1
     response = requests.post(url=url, data=body, headers=headers)
     prices_list = json.loads(response.text)
-    print(prices_list)
+    # print(prices_list)
 
     for item in prices_list['prices']:
         col = 0
         if item['price'] is not None:
             data = [item['dDate'], a, d, item['price']]
             for one in data:
-                print('row:{},col:{}'.format(row, col))
+                # print('row:{},col:{}'.format(row, col))
                 worksheet.write(row, col, one)
                 col += 1
             row += 1
-    file_name = './results/'+'{} to {}'.format(a, d) + '.xls'
+    file_name = './results/' + '{} to {}'.format(a, d) + '.xls'
     if os.path.exists(file_name):
         os.remove(file_name)
     workbook.save(file_name)
+    logging.info('写入完毕，保存在{}文件中'.format(file_name))
+
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s",
+                        datefmt='%Y-%m-%d  %H:%M:%S')
     if not os.path.exists('./results'):
         os.mkdir('results')
-    city_dic = {'PAR': 'SHA', 'AMS': 'SHA', 'FRA': ['SHA', 'PVG', 'NKG']}
+    city_dic = {'PAR': 'SHA', 'AMS': 'SHA', 'FRA': ['SHA', 'NKG'], 'BRU': 'BJS'}
     keys_list = city_dic.keys()
     for a_city in keys_list:
         b_city = city_dic[a_city]
